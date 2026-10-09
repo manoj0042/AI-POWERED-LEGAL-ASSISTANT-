@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>42Law Contract Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens taken from 42law.com */
+  :root {
+    --bg: #f3efe6;
+    --surf: #ebe7de;
+    --card: #faf8f3;
+    --ink: #111110;
+    --muted: #747068;
+    --border: #d0ccbf;
+    --navy: #1e3a5f;
+    --navy-f: rgba(30,58,95,.09);
+    --dark: #0c1d30;
+    --dark-m: #8fa3b3;
+    --dark-t: #ede9e1;
+    --signal: #008f5a;
+    --signal-f: rgba(0,143,90,.09);
+    --amber: #b86e1e;
+    --amber-f: rgba(184,110,30,.09);
+    --red: #b3261e;
+    --red-f: rgba(179,38,30,.08);
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --max-w: 1320px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    font-size: .92rem;
+  }
+
+  /* Nav */
+  header { background: var(--dark); color: var(--dark-t); position: sticky; top: 0; z-index: 10; }
+  .header-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    height: 54px;
+    padding: 0 52px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo { font-weight: 700; font-size: 1.2rem; letter-spacing: -.03em; color: #fff; }
+  .logo b { color: var(--signal); font-weight: 700; }
+  .sep { width: 1px; height: 18px; background: rgba(255,255,255,.18); }
+  .brand { font-size: .82rem; color: var(--dark-m); }
+  .badge {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dark-t);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: 5px 10px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 3px rgba(0,143,90,.25); }
+
+  /* Page intro */
+  .intro { max-width: var(--max-w); width: 100%; margin: 0 auto; padding: 44px 52px 8px; }
+  .eyebrow { font-family: var(--mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .intro h1 { font-size: clamp(1.6rem, 3vw, 2.3rem); letter-spacing: -.035em; line-height: 1.1; margin: 10px 0 8px; font-weight: 700; }
+  .intro h1 span { color: var(--navy); }
+  .intro p { margin: 0; color: var(--muted); max-width: 620px; line-height: 1.55; }
+
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 28px 52px 64px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+  }
+  .left { width: 360px; flex-shrink: 0; position: sticky; top: 78px; }
+  .right { flex: 1; min-width: 0; }
+
+  .card { background: var(--card); border: 1px solid var(--border); }
+  .panel { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+  .label { font-family: var(--mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  .label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+  textarea {
+    width: 100%;
+    height: 240px;
+    resize: vertical;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    font-family: var(--sans);
+    font-size: .86rem;
+    line-height: 1.55;
+    background: #fff;
+    color: var(--ink);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea::placeholder { color: #a8a498; }
+  textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px var(--navy-f); }
+  .meta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .66rem; color: var(--muted); margin-top: -6px; }
+  .meta button { background: none; border: 0; color: var(--navy); font: inherit; cursor: pointer; padding: 0; text-transform: uppercase; letter-spacing: .08em; }
+  .meta button:hover { text-decoration: underline; }
+
+  #dropzone {
+    border: 1px dashed #b9b4a4;
+    padding: 18px 14px;
+    text-align: center;
+    font-size: .82rem;
+    color: var(--muted);
+    background: var(--surf);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  #dropzone:hover, #dropzone.over { border-color: var(--navy); background: var(--navy-f); }
+  #dropzone svg { width: 24px; height: 24px; stroke: var(--navy); margin-bottom: 6px; }
+  #dropzone strong { color: var(--ink); font-weight: 600; }
+  #dropzone small { display: block; margin-top: 4px; font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; }
+  #fileStatus { font-size: .78rem; margin-top: 8px; color: var(--signal); font-weight: 500; word-break: break-word; }
+
+  button#analyse {
+    background: var(--navy);
+    color: #fff;
+    border: 1px solid var(--navy);
+    border-radius: 0;
+    padding: 14px 16px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: .92rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: background .15s;
+  }
+  button#analyse svg { width: 16px; height: 16px; }
+  button#analyse:hover:not(:disabled) { background: var(--ink); border-color: var(--ink); }
+  button#analyse:disabled { opacity: .5; cursor: not-allowed; }
+  .disclaimer { font-size: .72rem; color: var(--muted); line-height: 1.5; margin: 0; }
+
+  /* Right states */
+  .state { min-height: 460px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 48px 24px; gap: 12px; }
+  .empty svg { width: 56px; height: 56px; stroke: var(--navy); opacity: .85; }
+  .empty h3 { margin: 10px 0 0; font-size: 1.5rem; letter-spacing: -.03em; font-weight: 700; }
+  .empty p { margin: 0; max-width: 400px; color: var(--muted); line-height: 1.55; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+  .chips span { font-family: var(--mono); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border: 1px solid var(--border); color: var(--muted); }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin .9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading p { margin: 6px 0 0; font-weight: 600; }
+  .loading small { font-family: var(--mono); font-size: .66rem; color: var(--muted); letter-spacing: .06em; }
+  .error { background: var(--red-f); border: 1px solid rgba(179,38,30,.35); border-left: 3px solid var(--red); color: #7e1d17; padding: 16px 18px; line-height: 1.5; }
+
+  /* Result */
+  .score-card { padding: 24px 28px; display: flex; align-items: center; gap: 28px; margin-bottom: 16px; flex-wrap: wrap; }
+  .score-num { font-size: 4rem; font-weight: 700; line-height: .95; letter-spacing: -.05em; }
+  .score-num small { font-size: 1rem; color: var(--muted); font-weight: 400; letter-spacing: 0; }
+  .score-main { flex: 1; min-width: 200px; }
+  .bar { height: 6px; background: var(--surf); border: 1px solid var(--border); margin-top: 12px; }
+  .bar i { display: block; height: 100%; }
+  .pill { display: inline-block; padding: 5px 10px; font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 500; border: 1px solid; }
+  .pill.green { color: var(--signal); background: var(--signal-f); border-color: rgba(0,143,90,.4); }
+  .pill.amber { color: var(--amber); background: var(--amber-f); border-color: rgba(184,110,30,.4); }
+  .pill.red { color: var(--red); background: var(--red-f); border-color: rgba(179,38,30,.4); }
+  .bar i.green { background: var(--signal); }
+  .bar i.amber { background: var(--amber); }
+  .bar i.red { background: var(--red); }
+
+  .sec { padding: 26px 30px; margin-bottom: 14px; }
+  .sec h2 { font-size: 1.15rem; letter-spacing: -.02em; font-weight: 700; margin: 0 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .sec h2 em { font-style: normal; font-family: var(--mono); font-size: .66rem; font-weight: 500; color: var(--navy); background: var(--navy-f); padding: 4px 7px; letter-spacing: .06em; }
+  .sec p { line-height: 1.7; margin: 8px 0; font-size: .92rem; }
+  .sec p.item { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); font-size: .98rem; }
+  .sec p.item:first-of-type { border-top: 0; padding-top: 0; margin-top: 4px; }
+  .sec ul { margin: 6px 0 4px; padding-left: 20px; }
+  .sec li { line-height: 1.65; font-size: .9rem; margin: 5px 0; }
+  .sec li::marker { color: var(--navy); }
+  .sec strong { font-weight: 600; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 500; padding: 2px 7px; margin-left: 2px; vertical-align: 1px; border: 1px solid; }
+  .tag.low, .tag.minor { color: var(--signal); background: var(--signal-f); border-color: rgba(0,143,90,.35); }
+  .tag.medium, .tag.important { color: var(--amber); background: var(--amber-f); border-color: rgba(184,110,30,.35); }
+  .tag.high, .tag.urgent, .tag.critical { color: var(--red); background: var(--red-f); border-color: rgba(179,38,30,.35); }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) {
+    .header-inner, .intro, main { padding-left: 20px; padding-right: 20px; }
+    .intro { padding-top: 28px; }
+    main { flex-direction: column; gap: 18px; padding-bottom: 40px; }
+    .left { width: 100%; position: static; }
+    .brand, .sep { display: none; }
+    .sec { padding: 20px; }
+    .state { min-height: 300px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <span class="logo">42<b>law</b></span>
+    <span class="sep"></span>
+    <span class="brand">42Law Contract Intelligence</span>
+    <span class="badge">AI Powered</span>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="eyebrow">Contract Intelligence</div>
+  <h1>42Law Contract Intelligence — <span>law as an accelerator.</span></h1>
+  <p>Detailed legal reasoning on any contract: risks, key clauses and what is missing, written for qualified lawyers.</p>
+</section>
+
+<main>
+  <aside class="left">
+    <div class="card panel">
+      <div class="label">01 · Contract</div>
+      <textarea id="contract" placeholder="Paste contract text here..."></textarea>
+      <div class="meta"><span id="count">0 characters</span><button id="clear" type="button">Clear</button></div>
+
+      <div class="label">02 · Or upload</div>
+      <div id="dropzone">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <div><strong>Drag &amp; drop</strong> or click to browse</div>
+        <small>.txt · .pdf</small>
+        <div id="fileStatus"></div>
+      </div>
+      <input type="file" id="fileInput" accept=".txt,.pdf,text/plain,application/pdf" class="hidden">
+
+      <button id="analyse">
+        Analyse with Claude AI
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <p class="disclaimer">AI-generated analysis for review by a qualified lawyer. Not a substitute for professional judgment.</p>
+    </div>
+  </aside>
+
+  <section class="right" id="output">
+    <div class="card state empty" id="emptyState">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v18M7 21h10M5 7h14"/>
+        <path d="M5 7l-3 7a3.5 3.5 0 0 0 6 0L5 7zM19 7l-3 7a3.5 3.5 0 0 0 6 0l-3-7z"/>
+      </svg>
+      <h3>Ready when you are.</h3>
+      <p>Paste a contract or upload a file, then run the analysis for a clause-by-clause review with legal reasoning.</p>
+      <div class="chips"><span>Risk score</span><span>Key clauses</span><span>Risk flags</span><span>Missing clauses</span><span>Recommendations</span></div>
+    </div>
+    <div class="card state loading hidden" id="loadingState">
+      <div class="spinner"></div>
+      <p>Claude is reading your contract...</p>
+      <small>Detailed analyses can take up to a minute</small>
+    </div>
+    <div class="error hidden" id="errorState"></div>
+    <div class="hidden" id="resultState"></div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const contract = $('contract'), count = $('count'), btn = $('analyse');
+  const dropzone = $('dropzone'), fileInput = $('fileInput'), fileStatus = $('fileStatus');
+  const states = ['emptyState', 'loadingState', 'errorState', 'resultState'];
+
+  function show(name) {
+    states.forEach((s) => $(s).classList.toggle('hidden', s !== name));
+  }
+
+  function updateCount() {
+    count.textContent = contract.value.length.toLocaleString() + ' characters';
+  }
+  contract.addEventListener('input', updateCount);
+  $('clear').addEventListener('click', () => { contract.value = ''; fileStatus.textContent = ''; updateCount(); });
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function inline(s) {
+    return escapeHtml(s)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\b(Risk|Severity|Priority):\s*(Low|Medium|High|Critical|Urgent|Important|Minor)\b/g,
+        (_, k, v) => k + ': <span class="tag ' + v.toLowerCase() + '">' + v + '</span>');
+  }
+
+  function render(md) {
+    let html = '', inList = false, inSec = false, n = 0;
+    const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+    const closeSec = () => { closeList(); if (inSec) { html += '</section>'; inSec = false; } };
+    for (const raw of md.split('\n')) {
+      const line = raw.trimEnd();
+      if (/^##\s+/.test(line)) {
+        closeSec();
+        n++;
+        html += '<section class="card sec"><h2><em>' + String(n).padStart(2, '0') + '</em>' + inline(line.replace(/^##\s+/, '')) + '</h2>';
+        inSec = true;
+      } else if (/^\s*[-*•]\s+/.test(line)) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += '<li>' + inline(line.replace(/^\s*[-*•]\s+/, '')) + '</li>';
+      } else if (/^\s*\d+\.\s+/.test(line)) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += '<li>' + inline(line.replace(/^\s*/, '')) + '</li>';
+      } else if (line.trim() === '' || /^---+$/.test(line.trim())) {
+        closeList();
+      } else {
+        closeList();
+        const isItem = /^\*\*.+\*\*/.test(line.trim());
+        html += '<p' + (isItem ? ' class="item"' : '') + '>' + inline(line) + '</p>';
+      }
+    }
+    closeSec();
+    return html;
+  }
+
+  function riskCard(md) {
+    const m = md.match(/Score:\s*\[?\s*(\d{1,3})\s*\]?\s*\/\s*100/i);
+    if (!m) return '';
+    const score = Math.min(100, parseInt(m[1], 10));
+    // Higher score = higher risk
+    const cls = score >= 67 ? 'red' : score >= 34 ? 'amber' : 'green';
+    const label = cls === 'red' ? 'High risk' : cls === 'amber' ? 'Medium risk' : 'Low risk';
+    return '<div class="card score-card"><div><div class="label" style="margin-bottom:8px">Risk score</div>' +
+      '<div class="score-num">' + score + '<small> / 100</small></div></div>' +
+      '<div class="score-main"><span class="pill ' + cls + '">' + label + '</span>' +
+      '<div class="bar"><i class="' + cls + '" style="width:' + score + '%"></i></div></div></div>';
+  }
+
+  async function readFile(file) {
+    const name = file.name.toLowerCase();
+    fileStatus.textContent = 'Reading ' + file.name + '...';
+    try {
+      let text = '';
+      if (name.endsWith('.pdf')) {
+        if (!window.pdfjsLib) throw new Error('PDF reader failed to load.');
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map((it) => it.str).join(' ') + '\n\n';
+        }
+      } else if (name.endsWith('.txt')) {
+        text = await file.text();
+      } else {
+        throw new Error('Only .txt and .pdf files are supported.');
+      }
+      if (!text.trim()) throw new Error('No readable text found in file.');
+      contract.value = text.trim();
+      updateCount();
+      fileStatus.textContent = '✓ Loaded: ' + file.name;
+    } catch (e) {
+      fileStatus.textContent = '';
+      $('errorState').textContent = e.message;
+      show('errorState');
+    }
+  }
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) readFile(fileInput.files[0]);
+    fileInput.value = '';
+  });
+  ['dragenter', 'dragover'].forEach((ev) =>
+    dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((ev) =>
+    dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove('over'); }));
+  dropzone.addEventListener('drop', (e) => {
+    const f = e.dataTransfer.files[0];
+    if (f) readFile(f);
+  });
+
+  btn.addEventListener('click', async () => {
+    const text = contract.value.trim();
+    if (!text) {
+      $('errorState').textContent = 'Please paste contract text or upload a file first.';
+      show('errorState');
+      return;
+    }
+    btn.disabled = true;
+    show('loadingState');
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.error) throw new Error(data.error || 'Request failed (' + res.status + ').');
+      $('resultState').innerHTML = riskCard(data.analysis) + render(data.analysis);
+      show('resultState');
+    } catch (e) {
+      $('errorState').textContent = 'Error: ' + e.message;
+      show('errorState');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

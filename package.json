@@ -1,0 +1,8 @@
+{
+  "name": "42law-contract-intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx vercel dev"
+  }
+}
